@@ -5,12 +5,16 @@ module.exports = {
         .setName('quote')
         .setDescription('Submit your quote!')
         .addStringOption((option) =>
-            option.setName('phrase')
+            option.setName('quote')
                 .setDescription('The phrase you wish to submit.')
                 .setRequired(true))
+        .addStringOption((option) => 
+            option.setName('author')
+                .setDescription('If you wish, someone you want to attribute the quote to.'))
         .setDMPermission(false),
     async execute(interaction) {
-        const phrase = interaction.options.getString('phrase');
+        const phrase = interaction.options.getString('quote');
+        const author = interaction.options.getString('author');
         const channel = interaction.client.settings.get(interaction.guild.id, 'moderator')
         // return interaction.reply(` ${channel} `)
         if (!channel) return interaction.reply(`Channels have not been setup yet. Please run \`/setup\` to get started.`)
@@ -20,10 +24,10 @@ module.exports = {
             const guildChannel = interaction.guild.channels.cache.get(channel)
             if (!guildChannel) return interaction.editReply('Looks like the channel settings are not correct anymore, I advise a moderator run `/setup` to get started again.')
             const embed = new EmbedBuilder()
-                .setDescription(`\`${phrase}\``)
-                .setFooter({ text: 'Context? What is context?' })
-                .setColor(0xffe668)
-                .setAuthor({ name: interaction.user.tag, icon_url: interaction.user.displayAvatarURL() })
+                .setDescription(`\`\`\`"${phrase}" — ${author ?? 'Unknown'}\`\`\``)
+                .setTitle('Context? What is context?')
+                .setFooter({ text: 'Awaiting a decision...'})
+                .setColor(0xffe668);
             
             const row = new ActionRowBuilder()
                 .addComponents(
