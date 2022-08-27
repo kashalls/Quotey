@@ -1,6 +1,5 @@
 {
   "name": "quotey",
-  "packageManager": "yarn@3.2.3",
   "main": "src/index.js",
   "devDependencies": {
     "@akashics/eslint-config": "4.2.0",
