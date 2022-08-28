@@ -1,4 +1,4 @@
-FROM arm32v7/node
+FROM node:current
 
 ARG buildno
 ARG commitsha
