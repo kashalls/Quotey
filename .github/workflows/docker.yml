@@ -88,7 +88,7 @@ jobs:
           $IMAGE_ID:$VERSION \
           --amend $IMAGE_ID:$VERSION-amd64 \
           --amend $IMAGE_ID:$VERSION-arm64 \
-          --amend $IMAGE_ID:$VERSION-arm32v7 \
+          --amend $IMAGE_ID:$VERSION-arm32v7
           docker manifest push $IMAGE_ID:$VERSION
 
       - name: Push image to Dockerhub
@@ -107,5 +107,5 @@ jobs:
           kashall/$IMAGE_ID:$VERSION \
           --amend kashall/$IMAGE_ID:$VERSION-amd64 \
           --amend kashall/$IMAGE_ID:$VERSION-arm64 \
-          --amend kashall/$IMAGE_ID:$VERSION-arm32v7 \
+          --amend kashall/$IMAGE_ID:$VERSION-arm32v7
           docker manifest push kashall/$IMAGE_ID:$VERSION
