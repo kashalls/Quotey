@@ -1,0 +1,35 @@
+name: Docker Buildx
+
+on:
+  push:
+    branches:
+      - master
+
+    # Publish `v1.2.3` tags as releases.
+    tags:
+      - v*
+
+  # Run tests for any PRs.
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+
+      - name: install buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          version: latest
+
+      - name: Log into Dockerhub
+        run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u kashall --password-stdin
+
+      - name: build the image
+        run: |
+          docker buildx build --push \
+            --tag kashall/quotey:latest \
+            --platform linux/amd64,linux/arm/v7,linux/arm64 .
