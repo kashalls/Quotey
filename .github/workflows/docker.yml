@@ -31,7 +31,9 @@ jobs:
             docker-compose --file docker-compose.test.yml build
             docker-compose --file docker-compose.test.yml run sut
           else
-            docker build . --file Dockerfile
+            docker build . --file Dockerfile --platform=linux/arm64
+            docker build . --file Dockerfile --platform=linux/amd64
+            docker build . --file Dockerfile --platform=linux/arm/v7
           fi
 
   # Push image to GitHub Packages.
