@@ -31,9 +31,7 @@ jobs:
             docker-compose --file docker-compose.test.yml build
             docker-compose --file docker-compose.test.yml run sut
           else
-            docker build . --file Dockerfile --platform=linux/arm64
-            docker build . --file Dockerfile --platform=linux/amd64
-            docker build . --file Dockerfile --platform=linux/arm/v7
+            docker build . --file Dockerfile
           fi
 
   # Push image to GitHub Packages.
@@ -53,7 +51,9 @@ jobs:
           # Change git url to git:// to avoid authentication problems
           git remote set-url origin git://github.com/Kashalls/Quotey.git
 
-          docker build . --file Dockerfile --tag image
+          docker build . --file Dockerfile --tag image:amd64 --platform=linux/amd64
+          docker build . --file Dockerfile --tag image:arm64 --platform=linux/amd64
+          docker build . --file Dockerfile --tag image:arm32v7 --platform=linux/arm/v7
 
       - name: Log into GHCR
         run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u kashalls --password-stdin
@@ -64,7 +64,7 @@ jobs:
       - name: Push image to GHCR
         run: |
           IMAGE_ID=ghcr.io/kashalls/$IMAGE_NAME
-          
+
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
@@ -80,8 +80,16 @@ jobs:
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
 
-          docker tag image $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$VERSION
+          docker tag image:amd64 $IMAGE_ID:$VERSION-amd64
+          docker tag image:arm64 $IMAGE_ID:$VERSION-arm64
+          docker tag image:arm32v7 $IMAGE_ID:$VERSION-arm32v7
+
+          docker manifest create \
+          $IMAGE_ID:$VERSION \
+          --amend $IMAGE_ID:$VERSION-amd64 \
+          --amend $IMAGE_ID:$VERSION-arm64 \
+          --amend $IMAGE_ID:$VERSION-arm32v7 \
+          docker manifest push $IMAGE_ID:$VERSION
 
       - name: Push image to Dockerhub
         run: |
@@ -90,6 +98,14 @@ jobs:
 
           # Use Docker `latest` tag convention
           [ "$VERSION" == "master" ] && VERSION=latest
-          
-          docker tag image kashall/$IMAGE_NAME:$VERSION
-          docker push kashall/$IMAGE_NAME:$VERSION
+
+          docker tag image:amd64 kashall/$IMAGE_ID:$VERSION-amd64
+          docker tag image:arm64 kashall/$IMAGE_ID:$VERSION-arm64
+          docker tag image:arm32v7 kashall/$IMAGE_ID:$VERSION-arm32v7
+
+          docker manifest create \
+          kashall/$IMAGE_ID:$VERSION \
+          --amend kashall/$IMAGE_ID:$VERSION-amd64 \
+          --amend kashall/$IMAGE_ID:$VERSION-arm64 \
+          --amend kashall/$IMAGE_ID:$VERSION-arm32v7 \
+          docker manifest push kashall/$IMAGE_ID:$VERSION
