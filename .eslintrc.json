@@ -1,3 +1,7 @@
 {
-    "extends": "@akashics"
+    "extends": "@akashics",
+    "rules": {
+        "no-process-env": "off",
+        "no-bitwise": "off"
+    }
 }

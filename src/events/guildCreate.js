@@ -1,8 +1,6 @@
-
-
 module.exports = {
 	name: 'guildCreate',
 	execute(guild) {
-        guild.client.settings.ensure(guild.id);
-	},
+		guild.client.settings.ensure(guild.id);
+	}
 };
