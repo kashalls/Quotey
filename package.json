@@ -3,7 +3,7 @@
   "main": "src/index.js",
   "devDependencies": {
     "@akashics/eslint-config": "4.2.0",
-    "eslint": "8.23.0"
+    "eslint": "8.23.1"
   },
   "dependencies": {
     "@discordjs/rest": "^1.0.1",
